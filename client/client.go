@@ -13,9 +13,10 @@ func main() {
 	conn, _ := grpc.Dial(":8001", grpc.WithInsecure())
 	defer conn.Close()
 	client := pb.NewGreeterClient(conn)
-	//  SayHello(client)
+	// SayHello(client)
 	// SayList(client)
-	SayRecord(client)
+	// SayRecord(client)
+	SayYoo(client)
 }
 
 func SayHello(client pb.GreeterClient) error {
@@ -47,5 +48,19 @@ func SayRecord(client pb.GreeterClient) error {
 	}
 	resp, _ := stream.CloseAndRecv()
 	fmt.Println("Client receive", resp)
+	return nil
+}
+
+func SayYoo(client pb.GreeterClient) error {
+	stream, _ := client.SayYoo(context.Background())
+	for i := 0; i < 5; i++ {
+		stream.Send(&pb.HelloRequest{Name: fmt.Sprint("marko", i)})
+		resp, err := stream.Recv()
+		if err == io.EOF {
+			return stream.CloseSend()
+		}
+		fmt.Println("Client receive", resp.Message)
+	}
+
 	return nil
 }

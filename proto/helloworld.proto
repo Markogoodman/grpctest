@@ -7,6 +7,7 @@ service Greeter {
     rpc SayHello (HelloRequest) returns (HelloReply){}
     rpc SayList (HelloRequest) returns (stream HelloReply){} // server-side streaming
     rpc SayRecord (stream HelloRequest) returns (HelloReply){} // client-side streaming
+    rpc SayYoo (stream HelloRequest) returns (stream HelloReply){} // bi-dir streaming
 }
 
 message HelloRequest{

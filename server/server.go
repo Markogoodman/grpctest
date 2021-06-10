@@ -37,6 +37,22 @@ func (s *GreeterServer) SayRecord(stream pb.Greeter_SayRecordServer) error {
 		fmt.Println("Server receive", req.Name)
 	}
 }
+
+func (s *GreeterServer) SayYoo(stream pb.Greeter_SayYooServer) error {
+	i := 0
+	for {
+		req, err := stream.Recv()
+		if err == io.EOF {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+		fmt.Println("Server receive", req.Name)
+		stream.Send(&pb.HelloReply{Message: fmt.Sprint("youu", i)})
+		i++
+	}
+}
 func main() {
 	server := grpc.NewServer()
 	pb.RegisterGreeterServer(server, &GreeterServer{})
