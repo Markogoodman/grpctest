@@ -53,8 +53,19 @@ func (s *GreeterServer) SayYoo(stream pb.Greeter_SayYooServer) error {
 		i++
 	}
 }
+
+func GoodInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	fmt.Println("hi")
+	resp, err := handler(ctx, req)
+	fmt.Println("886")
+	return resp, err
+}
+
 func main() {
-	server := grpc.NewServer()
+	opts := []grpc.ServerOption{
+		grpc.UnaryInterceptor(GoodInterceptor),
+	}
+	server := grpc.NewServer(opts...)
 	pb.RegisterGreeterServer(server, &GreeterServer{})
 	lis, _ := net.Listen("tcp", ":8001")
 	server.Serve(lis)
